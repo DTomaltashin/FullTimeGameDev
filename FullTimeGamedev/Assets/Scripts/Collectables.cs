@@ -7,33 +7,28 @@ public class Collectables : MonoBehaviour
     enum ItemType { Coin, Health, Ammo, InventoryItem } //create dropdown menu for itemtypes
     [SerializeField] ItemType itemType; // variable declaration for itemtype
 
-    Player playerScript;
-    Inventory inventoryScript;
-
     //if InventoryItem then required fields;
     [SerializeField] Sprite inventorySprite;
     [SerializeField] string inventoryItemName;
     
     void Start()
     {
-        playerScript = GameObject.Find("Player").GetComponent<Player>();
-        inventoryScript = GameObject.Find("Player").GetComponent<Inventory>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.name == "Player")
+        if(collision.gameObject == Player.Instance.gameObject)//as the player object is a singleton we can access it directly like this
         {
             if (itemType == ItemType.Coin)
             {
-                playerScript.coinsCollected++;
+               Player.Instance.coinsCollected++;
             }
             else if (itemType == ItemType.Health)
             {
                 //add health... not more than 100
-                if (playerScript.health < 100)
+                if (Player.Instance.health < 100)
                 {
-                    playerScript.health += 10;
+                    Player.Instance.health += 10;
                 }
             }
             else if (itemType == ItemType.Ammo)
@@ -42,14 +37,14 @@ public class Collectables : MonoBehaviour
             }
             else if (itemType == ItemType.InventoryItem)
             {
-                inventoryScript.AddInventoryItem(inventoryItemName, inventorySprite);
+                Inventory.Instance.AddInventoryItem(inventoryItemName, inventorySprite);
             }
             else
             {
 
             }
 
-            playerScript.UpdateUI();
+            Player.Instance.UpdateUI();
             Destroy(gameObject);
         }
     }
